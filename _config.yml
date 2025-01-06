@@ -32,9 +32,10 @@ url: "https://panw.pro" # the base hostname & protocol for your site, e.g. http:
 domain: panw.pro
 
 # Build settings
-theme: minima
+theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme # add this line to the plugins list if you already have one
 
 # Exclude from processing.
 # The following items will not be processed, by default.
