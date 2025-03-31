@@ -1,18 +1,102 @@
 
 // Mock Data
-const emailData = [
-    { timestamp: "2025-03-31 09:14:23", sender: "finance@acme-partners.com", subject: "Payment Information Request", risk: "Critical", sensitiveContent: "Please send your credit card details to process payment", action: "Blocked" },
-    { timestamp: "2025-03-31 08:32:17", sender: "hr@globalcorp.com", subject: "Employee Information Update", risk: "High", sensitiveContent: "We need your social security number for verification", action: "Quarantined" },
-    { timestamp: "2025-03-31 07:45:09", sender: "support@cloudservices.net", subject: "Account Verification Required", risk: "Medium", sensitiveContent: "Confirm your account by providing your password", action: "Warned" },
-    { timestamp: "2025-03-30 18:22:56", sender: "marketing@retailstore.com", subject: "Special Offer for Premium Customers", risk: "Low", sensitiveContent: "Limited time discount for our valued customers", action: "Allowed" },
-    { timestamp: "2025-03-30 15:37:41", sender: "invoice@suppliernetwork.org", subject: "March Invoice #INV-2025-3421", risk: "High", sensitiveContent: "Banking details for wire transfer included", action: "Quarantined" }
-];
-const creditCardData = [
-    { timestamp: "2025-03-31 09:23:45", cardNumber: "4532 7614 9825 4176", location: "Payment Form", trigger: "Pattern Match", status: "Blocked" },
-    { timestamp: "2025-03-31 08:17:32", cardNumber: "5412 3673 2145 3214", location: "Email Attachment", trigger: "OCR Detection", status: "Blocked" },
-    { timestamp: "2025-03-30 14:52:19", cardNumber: "3782 4763 5126 453", location: "Chat Message", trigger: "AI Analysis", status: "Warned" },
-    { timestamp: "2025-03-30 11:36:07", cardNumber: "6011 5583 7194 3745", location: "Document Upload", trigger: "Pattern Match", status: "Blocked" }
-];
+// Fonctions de génération aléatoire
+function generateRandomEmail() {
+    const domains = ['acme-partners.com', 'globalcorp.com', 'cloudservices.net', 'retailstore.com', 'suppliernetwork.org', 'securetech.io', 'dataflow.net', 'enterprise-solutions.com'];
+    const prefixes = ['finance', 'support', 'admin', 'hr', 'marketing', 'sales', 'security', 'invoice', 'billing', 'info', 'contact', 'service'];
+    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+    return `${randomPrefix}@${randomDomain}`;
+}
+
+function generateRandomCreditCard() {
+    // Préfixes communs pour différents types de cartes
+    const prefixes = ['4532', '5412', '3782', '6011'];
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+
+    // Génère des groupes de 4 chiffres aléatoires
+    const generateGroup = () => Math.floor(1000 + Math.random() * 9000);
+
+    // Assemble le numéro complet selon le format approprié
+    if (prefix === '3782') { // American Express (15 chiffres)
+        return `${prefix} ${generateGroup()} ${generateGroup()}${Math.floor(100 + Math.random() * 900)}`;
+    } else { // Autres cartes (16 chiffres)
+        return `${prefix} ${generateGroup()} ${generateGroup()} ${generateGroup()}`;
+    }
+}
+
+function generateRandomSubject() {
+    const subjects = [
+        "Payment Information Request",
+        "Account Verification Required",
+        "Employee Information Update",
+        "Special Offer for Premium Customers",
+        "March Invoice #INV-2025-3421",
+        "Security Alert: Action Required",
+        "Quarterly Report Available",
+        "System Maintenance Notification",
+        "Password Reset Request",
+        "New Product Announcement"
+    ];
+    return subjects[Math.floor(Math.random() * subjects.length)];
+}
+
+// Génère des données aléatoires pour les emails
+function generateEmailData() {
+    const risks = ["Critical", "High", "Medium", "Low"];
+    const actions = ["Blocked", "Quarantined", "Warned", "Allowed"];
+    const sensitiveContents = [
+        "Please send your credit card details to process payment",
+        "We need your social security number for verification",
+        "Confirm your account by providing your password",
+        "Limited time discount for our valued customers",
+        "Banking details for wire transfer included",
+        "Please update your personal information",
+        "Verification code for your account access"
+    ];
+
+    return Array(5).fill().map((_, i) => {
+        const now = new Date();
+        now.setHours(now.getHours() - i);
+        const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
+        const risk = risks[Math.floor(Math.random() * risks.length)];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+
+        return {
+            timestamp,
+            sender: generateRandomEmail(),
+            subject: generateRandomSubject(),
+            risk,
+            sensitiveContent: sensitiveContents[Math.floor(Math.random() * sensitiveContents.length)],
+            action
+        };
+    });
+}
+
+// Génère des données aléatoires pour les cartes de crédit
+function generateCreditCardData() {
+    const locations = ["Payment Form", "Email Attachment", "Chat Message", "Document Upload", "Database Query", "Network Traffic"];
+    const triggers = ["Pattern Match", "OCR Detection", "AI Analysis", "Regex Match", "Heuristic Detection"];
+    const statuses = ["Blocked", "Warned"];
+
+    return Array(4).fill().map((_, i) => {
+        const now = new Date();
+        now.setHours(now.getHours() - i);
+        const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
+
+        return {
+            timestamp,
+            cardNumber: generateRandomCreditCard(),
+            location: locations[Math.floor(Math.random() * locations.length)],
+            trigger: triggers[Math.floor(Math.random() * triggers.length)],
+            status: statuses[Math.floor(Math.random() * statuses.length)]
+        };
+    });
+}
+
+// Remplacer les données statiques par des données générées dynamiquement
+const emailData = generateEmailData();
+const creditCardData = generateCreditCardData();
 const timelineEvents = [
     { timestamp: "2025-03-31 09:14:23", event: "Credit Card Data Blocked", severity: "Critical", description: "Attempted exfiltration of credit card data blocked" },
     { timestamp: "2025-03-31 08:32:17", event: "Suspicious Email Quarantined", severity: "High", description: "Email with suspicious attachment quarantined" },
